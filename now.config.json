@@ -1,0 +1,6 @@
+{
+  "scope": "x_snc_pdf_parse_2",
+  "scopeId": "69e4b1a5c3d6f2542924df75e001313a",
+  "name": "Pdf Parse 2",
+  "tsconfigPath": "./src/server/tsconfig.json"
+}

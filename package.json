@@ -1,0 +1,23 @@
+{
+    "name": "x-snc-pdf-parse-2",
+    "version": "1.0.0",
+    "description": "[BUILD AGENT GENERATED]:  read a pdf file and extract the form labels and fields",
+    "license": "UNLICENSED",
+    "scripts": {
+        "build": "now-sdk build",
+        "deploy": "now-sdk install",
+        "transform": "now-sdk transform",
+        "types": "now-sdk dependencies"
+    },
+    "dependencies": {
+        "pdf-parse": "1.1.1",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+    },
+    "devDependencies": {
+        "@servicenow/sdk": "4.1.1",
+        "@servicenow/glide": "26.0.1",
+        "eslint": "8.50.0",
+        "@servicenow/eslint-plugin-sdk-app-plugin": "4.1.1"
+    }
+}

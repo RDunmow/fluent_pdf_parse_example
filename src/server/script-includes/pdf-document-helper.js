@@ -1,0 +1,217 @@
+import { gs } from '@servicenow/glide';
+import { GlideRecord } from '@servicenow/glide';
+import { GlideDateTime } from '@servicenow/glide';
+import { GlideSysAttachment } from '@servicenow/glide';
+
+// Helper functions for managing PDF document records and parsing
+export function createPDFDocument(fileName, description, documentType) {
+    try {
+        var gr = new GlideRecord('x_snc_pdf_parse_2_pdf_document');
+        gr.initialize();
+        
+        gr.setValue('document_name', fileName || 'Untitled PDF');
+        gr.setValue('description', description || '');
+        gr.setValue('document_type', documentType || 'other');
+        gr.setValue('parsing_status', 'pending');
+        
+        var sysId = gr.insert();
+        
+        if (sysId) {
+            gs.info('Created PDF document record: ' + sysId + ' for file: ' + fileName);
+            return sysId;
+        } else {
+            gs.error('Failed to create PDF document record for: ' + fileName);
+            return null;
+        }
+    } catch (e) {
+        gs.error('Error creating PDF document record: ' + e.message);
+        return null;
+    }
+}
+
+export function updatePDFParsingResults(sysId, analysisResult) {
+    try {
+        var gr = new GlideRecord('x_snc_pdf_parse_2_pdf_document');
+        
+        if (!gr.get(sysId)) {
+            gs.error('PDF document record not found: ' + sysId);
+            return false;
+        }
+        
+        if (analysisResult.success) {
+            // Update with successful parsing results
+            gr.setValue('parsing_status', 'completed');
+            gr.setValue('parsing_confidence', analysisResult.confidence || 0);
+            gr.setValue('is_form_document', analysisResult.isForm || false);
+            
+            // PDF metadata
+            if (analysisResult.pdfInfo) {
+                gr.setValue('pdf_pages', analysisResult.pdfInfo.pages || 0);
+                gr.setValue('pdf_version', analysisResult.pdfInfo.version || '');
+                gr.setValue('pdf_metadata', JSON.stringify(analysisResult.pdfInfo));
+            }
+            
+            // Extracted content
+            var extractedText = analysisResult.text || '';
+            if (extractedText.length > 8000) {
+                extractedText = extractedText.substring(0, 7990) + '...[TRUNCATED]';
+            }
+            gr.setValue('extracted_text', extractedText);
+            
+            // Form analysis results
+            if (analysisResult.summary) {
+                gr.setValue('form_labels_found', analysisResult.summary.totalLabels || 0);
+                gr.setValue('form_fields_found', analysisResult.summary.totalFields || 0);
+                gr.setValue('has_text_fields', analysisResult.summary.hasTextFields || false);
+                gr.setValue('has_checkboxes', analysisResult.summary.hasCheckboxes || false);
+                gr.setValue('has_radio_buttons', analysisResult.summary.hasRadioButtons || false);
+            }
+            
+            // Store detailed analysis as JSON
+            if (analysisResult.formAnalysis) {
+                var analysisJson = JSON.stringify(analysisResult.formAnalysis);
+                if (analysisJson.length > 8000) {
+                    analysisJson = analysisJson.substring(0, 7990) + '...[TRUNCATED]';
+                }
+                gr.setValue('form_analysis_data', analysisJson);
+            }
+            
+            // Clear any previous error
+            gr.setValue('parsing_error', '');
+            
+        } else {
+            // Update with parsing failure
+            gr.setValue('parsing_status', 'failed');
+            gr.setValue('parsing_error', analysisResult.error || 'Unknown parsing error');
+        }
+        
+        // Set parsing timestamp
+        gr.setValue('parsed_on', new GlideDateTime().getDisplayValue());
+        
+        gr.update();
+        
+        gs.info('Updated PDF document record: ' + sysId + ' with parsing results');
+        return true;
+        
+    } catch (e) {
+        gs.error('Error updating PDF parsing results: ' + e.message);
+        return false;
+    }
+}
+
+export function processPDFFromAttachment(attachmentSysId, documentName, documentType) {
+    try {
+        // Create the PDF document record first
+        var docSysId = createPDFDocument(documentName, 'Processed from attachment', documentType);
+        
+        if (!docSysId) {
+            return null;
+        }
+        
+        // Update status to processing
+        var gr = new GlideRecord('x_snc_pdf_parse_2_pdf_document');
+        if (gr.get(docSysId)) {
+            gr.setValue('parsing_status', 'processing');
+            gr.update();
+        }
+        
+        // Get the attachment data
+        var attachmentGR = new GlideRecord('sys_attachment');
+        if (!attachmentGR.get(attachmentSysId)) {
+            updatePDFParsingResults(docSysId, {
+                success: false,
+                error: 'Attachment record not found'
+            });
+            return docSysId;
+        }
+        
+        // Use GlideSysAttachment to read the file content
+        var attachment = new GlideSysAttachment();
+        try {
+            var attachmentBytes = attachment.getContentStream(attachmentSysId);
+            if (attachmentBytes === null || attachmentBytes === undefined) {
+                updatePDFParsingResults(docSysId, {
+                    success: false,
+                    error: 'Could not retrieve attachment data'
+                });
+                return docSysId;
+            }
+        } catch (attachmentError) {
+            updatePDFParsingResults(docSysId, {
+                success: false,
+                error: 'Error reading attachment: ' + attachmentError.message
+            });
+            return docSysId;
+        }
+        
+        // Parse the PDF using our PDF parser
+        var pdfParser = new global.PDFParser();
+        
+        pdfParser.processFormPDF(attachmentBytes).then(function(result) {
+            updatePDFParsingResults(docSysId, result);
+            
+            if (result.success) {
+                gs.addInfoMessage('PDF processing completed successfully. Confidence: ' + result.confidence + '%');
+            } else {
+                gs.addErrorMessage('PDF processing failed: ' + result.error);
+            }
+        }).catch(function(error) {
+            updatePDFParsingResults(docSysId, {
+                success: false,
+                error: 'Processing exception: ' + error
+            });
+            gs.addErrorMessage('PDF processing exception: ' + error);
+        });
+        
+        return docSysId;
+        
+    } catch (e) {
+        gs.error('Error processing PDF from attachment: ' + e.message);
+        return null;
+    }
+}
+
+export function getPDFDocumentAnalysis(sysId) {
+    try {
+        var gr = new GlideRecord('x_snc_pdf_parse_2_pdf_document');
+        
+        if (!gr.get(sysId)) {
+            return null;
+        }
+        
+        var analysis = {
+            documentName: gr.getValue('document_name'),
+            documentType: gr.getValue('document_type'),
+            parsingStatus: gr.getValue('parsing_status'),
+            confidence: parseFloat(gr.getValue('parsing_confidence') || '0'),
+            isForm: gr.getValue('is_form_document') === 'true',
+            pages: parseInt(gr.getValue('pdf_pages') || '0'),
+            labelsFound: parseInt(gr.getValue('form_labels_found') || '0'),
+            fieldsFound: parseInt(gr.getValue('form_fields_found') || '0'),
+            extractedText: gr.getValue('extracted_text'),
+            parsedOn: gr.getValue('parsed_on'),
+            error: gr.getValue('parsing_error')
+        };
+        
+        // Parse JSON data if available
+        try {
+            var formAnalysisData = gr.getValue('form_analysis_data');
+            if (formAnalysisData) {
+                analysis.formAnalysis = JSON.parse(formAnalysisData);
+            }
+            
+            var pdfMetadata = gr.getValue('pdf_metadata');
+            if (pdfMetadata) {
+                analysis.pdfMetadata = JSON.parse(pdfMetadata);
+            }
+        } catch (parseError) {
+            gs.warn('Error parsing JSON data for PDF document: ' + parseError.message);
+        }
+        
+        return analysis;
+        
+    } catch (e) {
+        gs.error('Error getting PDF document analysis: ' + e.message);
+        return null;
+    }
+}
