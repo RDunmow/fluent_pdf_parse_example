@@ -15,5 +15,6 @@ export const parsePDFAttachment = UiAction({
         style: 'primary',
     },
     condition: `current.parsing_status == 'pending' || current.parsing_status == 'failed'`,
-    script: Now.include('../../server/ui-actions/parse-pdf-attachment.js')
+    script: Now.include('../../server/ui-actions/parse-pdf-attachment.js'),
+    messages: [],
 })

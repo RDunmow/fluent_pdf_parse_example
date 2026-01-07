@@ -1,5 +1,13 @@
-import '@servicenow/sdk/global';
-import { Table, StringColumn, IntegerColumn, DecimalColumn, BooleanColumn, DateTimeColumn, ChoiceColumn } from '@servicenow/sdk/core'
+import '@servicenow/sdk/global'
+import {
+    Table,
+    StringColumn,
+    IntegerColumn,
+    DecimalColumn,
+    BooleanColumn,
+    DateTimeColumn,
+    ChoiceColumn,
+} from '@servicenow/sdk/core'
 
 // IMPORTANT: The exported constant name MUST match the name property value
 export const x_snc_pdf_parse_2_pdf_document = Table({
@@ -10,14 +18,14 @@ export const x_snc_pdf_parse_2_pdf_document = Table({
         document_name: StringColumn({
             label: 'Document Name',
             maxLength: 255,
-            mandatory: true
+            mandatory: true,
         }),
-        
+
         description: StringColumn({
             label: 'Description',
-            maxLength: 1000
+            maxLength: 1000,
         }),
-        
+
         document_type: ChoiceColumn({
             label: 'Document Type',
             choices: {
@@ -26,12 +34,12 @@ export const x_snc_pdf_parse_2_pdf_document = Table({
                 invoice: { label: 'Invoice', sequence: 2 },
                 application: { label: 'Application', sequence: 3 },
                 report: { label: 'Report', sequence: 4 },
-                other: { label: 'Other', sequence: 5 }
+                other: { label: 'Other', sequence: 5 },
             },
             dropdown: 'dropdown_with_none',
-            default: 'other'
+            default: 'other',
         }),
-        
+
         // PDF parsing results
         parsing_status: ChoiceColumn({
             label: 'Parsing Status',
@@ -39,97 +47,100 @@ export const x_snc_pdf_parse_2_pdf_document = Table({
                 pending: { label: 'Pending', sequence: 0 },
                 processing: { label: 'Processing', sequence: 1 },
                 completed: { label: 'Completed', sequence: 2 },
-                failed: { label: 'Failed', sequence: 3 }
+                failed: { label: 'Failed', sequence: 3 },
             },
             dropdown: 'dropdown_with_none',
-            default: 'pending'
+            default: 'pending',
         }),
-        
+
         parsing_confidence: DecimalColumn({
             label: 'Parsing Confidence (%)',
-            maxLength: 5
+            maxLength: 5,
         }),
-        
+
         is_form_document: BooleanColumn({
             label: 'Is Form Document',
-            default: false
+            default: false,
         }),
-        
+
         // PDF metadata
         pdf_pages: IntegerColumn({
-            label: 'Number of Pages'
+            label: 'Number of Pages',
         }),
-        
+
         pdf_version: StringColumn({
             label: 'PDF Version',
-            maxLength: 10
+            maxLength: 10,
         }),
-        
+
         // Extracted content
         extracted_text: StringColumn({
             label: 'Extracted Text',
-            maxLength: 8000  // Large text field for full content
+            maxLength: 8000, // Large text field for full content
         }),
-        
+
         form_labels_found: IntegerColumn({
-            label: 'Form Labels Found'
+            label: 'Form Labels Found',
         }),
-        
+
         form_fields_found: IntegerColumn({
-            label: 'Form Fields Found'  
+            label: 'Form Fields Found',
         }),
-        
+
         // Field types detected
         has_text_fields: BooleanColumn({
             label: 'Has Text Fields',
-            default: false
+            default: false,
         }),
-        
+
         has_checkboxes: BooleanColumn({
             label: 'Has Checkboxes',
-            default: false
+            default: false,
         }),
-        
+
         has_radio_buttons: BooleanColumn({
-            label: 'Has Radio Buttons', 
-            default: false
+            label: 'Has Radio Buttons',
+            default: false,
         }),
-        
+
         // Detailed parsing results (JSON)
         form_analysis_data: StringColumn({
             label: 'Form Analysis Data',
-            maxLength: 8000  // Store JSON data
+            maxLength: 8000, // Store JSON data
         }),
-        
+
         pdf_metadata: StringColumn({
             label: 'PDF Metadata',
-            maxLength: 4000  // Store PDF metadata as JSON
+            maxLength: 4000, // Store PDF metadata as JSON
         }),
-        
+
         // Processing timestamps
         parsed_on: DateTimeColumn({
-            label: 'Parsed On'
+            label: 'Parsed On',
         }),
-        
+
         // Error information
         parsing_error: StringColumn({
             label: 'Parsing Error',
-            maxLength: 1000
-        })
+            maxLength: 1000,
+        }),
     },
-    
+
     // Table configuration
     display: 'document_name',
     extensible: false,
     audit: true,
-    allow_web_service_access: true,
-    actions: ['create', 'read', 'update', 'delete'],
-    accessible_from: 'package_private',
-    
+    allowWebServiceAccess: true,
+    actions: ['read', 'update', 'create'],
+    accessibleFrom: 'package_private',
+
     // Auto-numbering for documents
-    auto_number: {
+    autoNumber: {
         prefix: 'PDF',
         number: 1000,
-        number_of_digits: 4
-    }
-});
+        numberOfDigits: 4,
+    },
+    allowClientScripts: true,
+    allowNewFields: true,
+    allowUiActions: true,
+})
