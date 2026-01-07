@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_module">
+    <sys_module action="INSERT_OR_UPDATE">
+        <content><![CDATA['use strict';
+
+var __global$ = globalThis || (typeof window !== "undefined" ? window : self);
+
+function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+function getAugmentedNamespace(n) {
+    if (n.__esModule) return n;
+    var f = n.default;
+    if (typeof f == "function") {
+        var a = function a() {
+            if (this instanceof a) {
+                return Reflect.construct(f, arguments, this.constructor);
+            }
+            return f.apply(this, arguments);
+        };
+        a.prototype = f.prototype;
+    } else a = {};
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+    Object.keys(n).forEach(function(k) {
+        var d = Object.getOwnPropertyDescriptor(n, k);
+        Object.defineProperty(a, k, d.get ? d : {
+            enumerable: true,
+            get: function() {
+                return n[k];
+            }
+        });
+    });
+    return a;
+}
+
+var pdfParse$1 = {
+    exports: {}
+};
+
+var _polyfillNode_fs = {};
+
+var _polyfillNode_fs$1 = /*#__PURE__*/Object.freeze({
+	
+	default: _polyfillNode_fs
+});
+
+var require$$0 = /*@__PURE__*/ getAugmentedNamespace(_polyfillNode_fs$1);
+
+function commonjsRequire(path) {
+    throw new Error('Could not dynamically require "' + path + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
+}
+
+var PDFJS = null;
+function render_page(pageData) {
+    //check documents https://mozilla.github.io/pdf.js/
+    //ret.text = ret.text ? ret.text : "";
+    let render_options = {
+        //replaces all occurrences of whitespace with standard spaces (0x20). The default value is `false`.
+        normalizeWhitespace: false,
+        //do not attempt to combine same line TextItem's. The default value is `false`.
+        disableCombineTextItems: false
+    };
+    return pageData.getTextContent(render_options).then(function(textContent) {
+        let lastY, text = '';
+        //https://github.com/mozilla/pdf.js/issues/8963
+        //https://github.com/mozilla/pdf.js/issues/2140
+        //https://gist.github.com/hubgit/600ec0c224481e910d2a0f883a7b98e3
+        //https://gist.github.com/hubgit/600ec0c224481e910d2a0f883a7b98e3
+        for (let item of textContent.items){
+            if (lastY == item.transform[5] || !lastY) {
+                text += item.str;
+            } else {
+                text += '\n' + item.str;
+            }
+            lastY = item.transform[5];
+        }
+        //let strings = textContent.items.map(item => item.str);
+        //let text = strings.join("\n");
+        //text = text.replace(/[ ]+/ig," ");
+        //ret.text = `${ret.text} ${text} \n\n`;
+        return text;
+    });
+}
+const DEFAULT_OPTIONS = {
+    pagerender: render_page,
+    max: 0,
+    //check https://mozilla.github.io/pdf.js/getting_started/
+    version: 'v1.10.100'
+};
+async function PDF(dataBuffer, options) {
+    let ret = {
+        numpages: 0,
+        numrender: 0,
+        info: null,
+        metadata: null,
+        text: "",
+        version: null
+    };
+    if (typeof options == 'undefined') options = DEFAULT_OPTIONS;
+    if (typeof options.pagerender != 'function') options.pagerender = DEFAULT_OPTIONS.pagerender;
+    if (typeof options.max != 'number') options.max = DEFAULT_OPTIONS.max;
+    if (typeof options.version != 'string') options.version = DEFAULT_OPTIONS.version;
+    if (options.version == 'default') options.version = DEFAULT_OPTIONS.version;
+    PDFJS = PDFJS ? PDFJS : commonjsRequire(`./pdf.js/${options.version}/build/pdf.js`);
+    ret.version = PDFJS.version;
+    // Disable workers to avoid yet another cross-origin issue (workers need
+    // the URL of the script to be loaded, and dynamically loading a cross-origin
+    // script does not work).
+    PDFJS.disableWorker = true;
+    let doc = await PDFJS.getDocument(dataBuffer);
+    ret.numpages = doc.numPages;
+    let metaData = await doc.getMetadata().catch(function(err) {
+        return null;
+    });
+    ret.info = metaData ? metaData.info : null;
+    ret.metadata = metaData ? metaData.metadata : null;
+    let counter = options.max <= 0 ? doc.numPages : options.max;
+    counter = counter > doc.numPages ? doc.numPages : counter;
+    ret.text = "";
+    for(var i = 1; i <= counter; i++){
+        let pageText = await doc.getPage(i).then((pageData)=>options.pagerender(pageData)).catch((err)=>{
+            // todo log err using debug
+            debugger;
+            return "";
+        });
+        ret.text = `${ret.text}\n\n${pageText}`;
+    }
+    ret.numrender = counter;
+    doc.destroy();
+    return ret;
+}
+var pdfParse = PDF;
+
+(function (module) {
+	const Fs = require$$0;
+	const Pdf = pdfParse;
+	module.exports = Pdf;
+	let isDebugMode = !module.parent;
+	//process.env.AUTO_KENT_DEBUG
+	//for testing purpose
+	if (isDebugMode) {
+	    let PDF_FILE = './test/data/05-versions-space.pdf';
+	    let dataBuffer = Fs.readFileSync(PDF_FILE);
+	    Pdf(dataBuffer).then(function(data) {
+	        Fs.writeFileSync(`${PDF_FILE}.txt`, data.text, {
+	            encoding: 'utf8',
+	            flag: 'w'
+	        });
+	        debugger;
+	    }).catch(function(err) {
+	        debugger;
+	    });
+	} 
+} (pdfParse$1));
+
+var pdfParseExports = pdfParse$1.exports;
+var index = /*@__PURE__*/getDefaultExportFromCjs(pdfParseExports);
+
+module.exports = index;
+]]></content>
+        <external_source>true</external_source>
+        <path>x_snc_pdf_parse_2/pdf-parse/1.1.1/index.js</path>
+        <sys_class_name>sys_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-07 14:32:13</sys_created_on>
+        <sys_id>86d1fda8e9f34efeb6aad7c847cd667d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_pdf_parse_2/pdf-parse/1.1.1/index.js</sys_name>
+        <sys_package display_value="Pdf Parse 2" source="x_snc_pdf_parse_2">69e4b1a5c3d6f2542924df75e001313a</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pdf Parse 2">69e4b1a5c3d6f2542924df75e001313a</sys_scope>
+        <sys_update_name>sys_module_86d1fda8e9f34efeb6aad7c847cd667d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-07 14:32:13</sys_updated_on>
+    </sys_module>
+</record_update>
