@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_module">
+    <sys_module action="INSERT_OR_UPDATE">
+        <content><![CDATA[{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "serialNumber": "urn:uuid:9448c7ad-3b3e-4d9f-b5e7-ec92129f6086",
+  "metadata": {
+    "timestamp": "2026-01-07T16:00:25.921Z",
+    "tools": {
+      "components": [
+        {
+          "type": "library",
+          "name": "sdk-build-plugins",
+          "group": "@servicenow",
+          "version": "4.1.1",
+          "author": "ServiceNow"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "name": "x-snc-pdf-parse-2",
+      "version": "1.0.0",
+      "bom-ref": "pkg:servicenow/x-snc-pdf-parse-2@1.0.0?sys_scope_id=69e4b1a5c3d6f2542924df75e001313a",
+      "description": "[BUILD AGENT GENERATED]:  read a pdf file and extract the form labels and fields",
+      "licenses": [
+        {
+          "license": {
+            "name": "UNLICENSED"
+          }
+        }
+      ],
+      "purl": "pkg:servicenow/x-snc-pdf-parse-2@1.0.0?sys_scope_id=69e4b1a5c3d6f2542924df75e001313a"
+    }
+  },
+  "components": [
+    {
+      "type": "application",
+      "name": "pdf-parse",
+      "version": "1.1.1",
+      "bom-ref": "pkg:npm/pdf-parse@1.1.1?vcs_url=https%3A%2F%2Fgitlab.com%2Fautokent%2Fpdf-parse.git",
+      "author": "Mehmet Kozan <mehmet.kozan@live.com>",
+      "description": "Pure javascript cross-platform module to extract text from PDFs.",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/pdf-parse@1.1.1?vcs_url=https%3A%2F%2Fgitlab.com%2Fautokent%2Fpdf-parse.git",
+      "externalReferences": [
+        {
+          "url": "https://gitlab.com/autokent/pdf-parse/issues",
+          "type": "issue-tracker",
+          "comment": "as detected from PackageJson property \"bugs.url\""
+        },
+        {
+          "url": "https://gitlab.com/autokent/pdf-parse.git",
+          "type": "vcs",
+          "comment": "as detected from PackageJson property \"repository.url\""
+        },
+        {
+          "url": "https://gitlab.com/autokent/pdf-parse",
+          "type": "website",
+          "comment": "as detected from PackageJson property \"homepage\""
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/pdf-parse@1.1.1?vcs_url=https%3A%2F%2Fgitlab.com%2Fautokent%2Fpdf-parse.git"
+    },
+    {
+      "ref": "pkg:servicenow/x-snc-pdf-parse-2@1.0.0?sys_scope_id=69e4b1a5c3d6f2542924df75e001313a",
+      "dependsOn": [
+        "pkg:npm/pdf-parse@1.1.1?vcs_url=https%3A%2F%2Fgitlab.com%2Fautokent%2Fpdf-parse.git"
+      ]
+    }
+  ]
+}]]></content>
+        <external_source>false</external_source>
+        <path>x_snc_pdf_parse_2/x-snc-pdf-parse-2/1.0.0/bom.json</path>
+        <sys_class_name>sys_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-07 13:50:50</sys_created_on>
+        <sys_id>938da2e3bf844e828440a9cd8930e122</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_pdf_parse_2/x-snc-pdf-parse-2/1.0.0/bom.json</sys_name>
+        <sys_package display_value="Pdf Parse 2" source="x_snc_pdf_parse_2">69e4b1a5c3d6f2542924df75e001313a</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pdf Parse 2">69e4b1a5c3d6f2542924df75e001313a</sys_scope>
+        <sys_update_name>sys_module_938da2e3bf844e828440a9cd8930e122</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-07 13:50:50</sys_updated_on>
+    </sys_module>
+</record_update>

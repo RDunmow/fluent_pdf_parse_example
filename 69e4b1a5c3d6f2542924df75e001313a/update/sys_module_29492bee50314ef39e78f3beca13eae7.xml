@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_module">
+    <sys_module action="INSERT_OR_UPDATE">
+        <content><![CDATA[{
+  "name": "x-snc-pdf-parse-2",
+  "version": "1.0.0",
+  "description": "[BUILD AGENT GENERATED]:  read a pdf file and extract the form labels and fields",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "now-sdk build",
+    "deploy": "now-sdk install",
+    "transform": "now-sdk transform",
+    "types": "now-sdk dependencies"
+  },
+  "dependencies": {
+    "pdf-parse": "1.1.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@servicenow/sdk": "4.1.1",
+    "@servicenow/glide": "26.0.1",
+    "eslint": "8.50.0",
+    "@servicenow/eslint-plugin-sdk-app-plugin": "4.1.1"
+  }
+}]]></content>
+        <external_source>false</external_source>
+        <path>x_snc_pdf_parse_2/x-snc-pdf-parse-2/1.0.0/package.json</path>
+        <sys_class_name>sys_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-07 13:50:50</sys_created_on>
+        <sys_id>29492bee50314ef39e78f3beca13eae7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_pdf_parse_2/x-snc-pdf-parse-2/1.0.0/package.json</sys_name>
+        <sys_package display_value="Pdf Parse 2" source="x_snc_pdf_parse_2">69e4b1a5c3d6f2542924df75e001313a</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Pdf Parse 2">69e4b1a5c3d6f2542924df75e001313a</sys_scope>
+        <sys_update_name>sys_module_29492bee50314ef39e78f3beca13eae7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-07 13:50:50</sys_updated_on>
+    </sys_module>
+</record_update>

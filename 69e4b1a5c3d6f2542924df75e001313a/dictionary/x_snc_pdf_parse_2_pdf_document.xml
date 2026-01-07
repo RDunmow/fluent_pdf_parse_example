@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element audit="true" db_object_id="47efbda1c35ef2542924df75e001312f" label="PDF Document" max_length="40" name="x_snc_pdf_parse_2_pdf_document" type="collection">
+        <element label="Parsing Confidence (%)" max_length="5" name="parsing_confidence" type="decimal"/>
+        <element attributes="edge_encryption_enabled=true" label="Form Analysis Data" max_length="8000" name="form_analysis_data" type="string"/>
+        <element choice="1" default="other" label="Document Type" max_length="40" name="document_type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Invoice" sequence="2" value="invoice"/>
+                <element inactive_on_update="false" label="Application" sequence="3" value="application"/>
+                <element inactive_on_update="false" label="Report" sequence="4" value="report"/>
+                <element inactive_on_update="false" label="Form" sequence="0" value="form"/>
+                <element inactive_on_update="false" label="Other" sequence="5" value="other"/>
+                <element inactive_on_update="false" label="Contract" sequence="1" value="contract"/>
+            </choice>
+        </element>
+        <element label="Has Text Fields" max_length="40" name="has_text_fields" type="boolean"/>
+        <element label="Form Fields Found" max_length="40" name="form_fields_found" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" label="PDF Version" max_length="10" name="pdf_version" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Parsing Error" max_length="1000" name="parsing_error" type="string"/>
+        <element choice="1" default="pending" label="Parsing Status" max_length="40" name="parsing_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Completed" sequence="2" value="completed"/>
+                <element inactive_on_update="false" label="Failed" sequence="3" value="failed"/>
+                <element inactive_on_update="false" label="Pending" sequence="0" value="pending"/>
+                <element inactive_on_update="false" label="Processing" sequence="1" value="processing"/>
+            </choice>
+        </element>
+        <element label="Has Radio Buttons" max_length="40" name="has_radio_buttons" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Description" max_length="1000" name="description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" display="true" label="Document Name" mandatory="true" max_length="255" name="document_name" type="string"/>
+        <element label="Form Labels Found" max_length="40" name="form_labels_found" type="integer"/>
+        <element label="Number of Pages" max_length="40" name="pdf_pages" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" label="Parsed On" max_length="40" name="parsed_on" type="glide_date_time"/>
+        <element attributes="edge_encryption_enabled=true" label="Extracted Text" max_length="8000" name="extracted_text" type="string"/>
+        <element label="Is Form Document" max_length="40" name="is_form_document" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="PDF Metadata" max_length="4000" name="pdf_metadata" type="string"/>
+        <element label="Has Checkboxes" max_length="40" name="has_checkboxes" type="boolean"/>
+    </element>
+</database>

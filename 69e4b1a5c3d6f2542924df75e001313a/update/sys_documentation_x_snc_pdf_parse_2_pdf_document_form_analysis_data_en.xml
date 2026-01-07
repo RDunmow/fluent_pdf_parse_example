@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="form_analysis_data" label="Form Analysis Data" language="en" table="x_snc_pdf_parse_2_pdf_document">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>form_analysis_data</element>
+            <help/>
+            <hint/>
+            <label>Form Analysis Data</label>
+            <language>en</language>
+            <name>x_snc_pdf_parse_2_pdf_document</name>
+            <plural>Form Analysis Data</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-01-07 14:32:12</sys_created_on>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Form Analysis Data</sys_name>
+            <sys_package display_value="Pdf Parse 2" source="x_snc_pdf_parse_2">69e4b1a5c3d6f2542924df75e001313a</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Pdf Parse 2">69e4b1a5c3d6f2542924df75e001313a</sys_scope>
+            <sys_update_name>sys_documentation_x_snc_pdf_parse_2_pdf_document_form_analysis_data_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-01-07 14:32:12</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
